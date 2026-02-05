@@ -1,0 +1,7 @@
+# Note: train.py regenerates this file with absolute paths
+# The path below is relative for portability
+path: ./yolo_dataset
+train: train/images
+val: val/images
+names:
+  0: medical_image

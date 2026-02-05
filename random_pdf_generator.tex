@@ -1,0 +1,113 @@
+\documentclass{article}
+% Removed margins via geometry for a cleaner "full-page" look if needed
+\usepackage[a4paper, top=2cm, bottom=2cm, left=2cm, right=2cm]{geometry}
+\usepackage{graphicx}
+\usepackage{lipsum} 
+\usepackage{xcolor} 
+\usepackage{booktabs} 
+\usepackage{wrapfig} 
+\usepackage{pgffor}  
+\usepackage{pgf}     
+\usepackage{tikz} 
+
+\graphicspath{{random_images/}}
+
+% Seed the random generator using the system time (minutes/seconds) 
+% This prevents the same layout from repeating every time you compile.
+\pgfmathsetseed{\number\pdffeedback\time}
+
+% Define medical report colors
+\definecolor{medblue}{RGB}{20, 40, 100}
+\definecolor{faintbg}{RGB}{240, 248, 255}
+\definecolor{alertred}{RGB}{150, 0, 0}
+
+% --- Updated Layout Macros ---
+
+% 1. Full Page Image (ZOOMED TO FILL)
+\newcommand{\layoutFullPage}[1]{
+    \clearpage
+    \thispagestyle{empty}
+    \pagecolor{black} 
+    \begin{tikzpicture}[remember picture, overlay]
+        \node[inner sep=0pt] at (current page.center) {
+            % Forced stretch to fill A4 dimensions
+            \includegraphics[width=\paperwidth, height=\paperheight]{#1}
+        };
+    \end{tikzpicture}
+    \newpage
+    \pagecolor{white} 
+}
+
+% 2. Image with Text Wrap
+\newcommand{\layoutWrap}[1]{
+    \clearpage
+    \section*{Clinical Findings (Ref: \pgfmathparse{int(random(1000,9999))}\pgfmathresult)}
+    \lipsum[1]
+    \begin{wrapfigure}{r}{0.5\textwidth}
+        \centering
+        \includegraphics[width=0.48\textwidth]{#1}
+        \caption{Regional Scan.}
+    \end{wrapfigure}
+    \lipsum[2-4]
+    \vspace{1cm}
+    \textcolor{medblue}{\textbf{Notes:}} \lipsum[5]
+}
+
+% 3. Image Top, Table Bottom
+\newcommand{\layoutTable}[1]{
+    \clearpage
+    \pagecolor{faintbg} 
+    \begin{center}
+        \includegraphics[width=0.8\textwidth, height=0.4\textheight, keepaspectratio]{#1}
+    \end{center}
+    \vspace{0.5cm}
+    \begin{center}
+        \begin{tabular}{llrr}
+            \toprule
+            \textbf{Parameter} & \textbf{Unit} & \textbf{Ref} & \textbf{Value} \\
+            \midrule
+            Hemoglobin & g/dL & 12-16 & 14.2 \\
+            Platelets & $10^3$/uL & 150-450 & 210 \\
+            WBC & $10^3$/uL & 4.5-11 & 7.8 \\
+            Glucose & mg/dL & 70-100 & 95 \\
+            Creatinine & mg/dL & 0.6-1.2 & 0.9 \\
+            \bottomrule
+        \end{tabular}
+    \end{center}
+    \lipsum[10]
+    \pagecolor{white}
+}
+
+% 4. Radiology Report (Messy/Tilted)
+\newcommand{\layoutMessy}[1]{
+    \clearpage
+    \subsection*{Radiology Analysis Report}
+    \lipsum[1]
+    \begin{figure}[h!]
+        \centering
+        % Slight rotation for realism
+        \pgfmathsetmacro{\randomangle}{rand*1.5}
+        \colorbox{black}{\includegraphics[width=0.55\textwidth, angle=\randomangle]{#1}}
+    \end{figure}
+    \textcolor{alertred}{\textbf{DIAGNOSTIC ALARM:}} \lipsum[3]
+}
+
+\begin{document}
+
+% The loop 
+\foreach \i in {1,...,60}{
+    % Choose a layout (1-4)
+    \pgfmathrandominteger{\layoutChoice}{1}{4}
+    
+    \ifnum\layoutChoice=1
+        \layoutFullPage{img\i.jpg}
+    \else\ifnum\layoutChoice=2
+        \layoutWrap{img\i.jpg}
+    \else\ifnum\layoutChoice=3
+        \layoutTable{img\i.jpg}
+    \else
+        \layoutMessy{img\i.jpg}
+    \fi\fi\fi
+}
+
+\end{document}
