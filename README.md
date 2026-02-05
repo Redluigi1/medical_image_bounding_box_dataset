@@ -108,6 +108,10 @@ streamlit run streamlit_interface.py
 4. Click "Save & Next" to save and move to next image
 5. Use "Skip Image" for pages without medical images
 
+![Streamlit App](images/streamlit.png)
+
+
+
 ##  Training YOLO
 
 ### Prerequisites
